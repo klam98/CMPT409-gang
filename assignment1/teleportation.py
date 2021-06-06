@@ -1,5 +1,6 @@
 # https://qiskit.org/textbook/ch-algorithms/teleportation.html
 import logging
+from unicodedata import normalize
 import warnings
 logging.captureWarnings(True)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -58,34 +59,41 @@ print("DONE.\n")
 print("STEP 0: Initialize q0")
 qc.append(init_gate, [0])
 qc.barrier()
+print(qc)
 print("DONE.\n")
 
 print("STEP 1: Create bell pair")
 create_bell_pair(qc, 1, 2)
 qc.barrier()
+print(qc)
 print("DONE.\n")
 
 print("STEP 2: Send q1 to Alice and q2 to Bob")
 alice_gates(qc, 0, 1)
+print(qc)
 print("DONE.\n")
 
 print("STEP 3: Alice measuring and sending classical bits to Bob...")
 measure_and_send(qc, 0, 1)
+print(qc)
 print("DONE.\n")
 
 print("STEP 4: Bob decoding qubits...")
 bob_gates(qc, 2, crz, crx)
+print(qc)
 print("DONE.\n")
 
 print("STEP 5: Reversing intitialization process...")
 qc.append(inverse_init_gate, [2])
+print(qc)
 print("DONE.\n")
 
 print("STEP 6: Generating result...")
 cr_result = ClassicalRegister(1)
 qc.add_register(cr_result)
 qc.measure(2,2)
-print("\tResults: %s" % cr_result)
+print(qc)
+# print("\tResults: %s" % cr_result)
 print("DONE.\n")
 
 print("STEP 7: Confirming results...")
@@ -93,5 +101,10 @@ qasm_sim = Aer.get_backend('qasm_simulator')
 t_qc = transpile(qc, qasm_sim)
 qobj = assemble(t_qc)
 counts = qasm_sim.run(qobj).result().get_counts()
-print("\tCounts: %s" % counts)
+
+for key in counts.keys():
+    counts[key] = str(counts[key] / 10) + "%"
+
+print("\tProbability distribution of qubit states: %s" % counts)
 print("DONE.\n")
+print("We can see we have a 100% chance of measuring q_2 (the leftmost bit in the string) in the state |0>. This is the expected result, and indicates the teleportation protocol has worked properly.")
