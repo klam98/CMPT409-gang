@@ -93,7 +93,6 @@ cr_result = ClassicalRegister(1)
 qc.add_register(cr_result)
 qc.measure(2,2)
 print(qc)
-# print("\tResults: %s" % cr_result)
 print("DONE.\n")
 
 print("STEP 7: Confirming results...")
