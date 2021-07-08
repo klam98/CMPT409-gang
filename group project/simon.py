@@ -1,3 +1,9 @@
+# ignore deprecation warnings
+import logging
+import warnings
+logging.captureWarnings(True)
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
+
 # importing Qiskit
 from qiskit import IBMQ, Aer
 from qiskit.providers.ibmq import least_busy
@@ -7,9 +13,7 @@ from qiskit import QuantumCircuit, transpile, assemble
 from qiskit.visualization import plot_histogram
 from qiskit_textbook.tools import simon_oracle
 
-# ignore deprecation warnings
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+import time
 
 
 ## SETUP
@@ -48,7 +52,9 @@ print("Generating a random distribution of qubit states using the previously gen
 aer_sim = Aer.get_backend('aer_simulator')
 shots = 1024
 qobj = assemble(simon_circuit, shots=shots)
+start = time.time()
 results = aer_sim.run(qobj).result()
+end = time.time()
 counts = results.get_counts()
 
 for key in counts.keys():
@@ -70,3 +76,5 @@ for z in counts:
 print("Since the result of each dot product is equal to 0 (mod 2), this implies that each qubit has a two-to-one mapping.\n")
 
 print("Using these results, we can then use Gaussian elimination which has a run time of O(n^3) to determine exactly which inputs are one-to-one and which are two-to-one.")
+
+print("Time taken: %fs" % (end - start))
